@@ -217,9 +217,7 @@ public void makeGUI()
           }
         } 
       );
-      
 
-    ;    
   // cp5.addScrollableList("board")
   //  .setPosition(275, 10)
   //  .setSize(250, 400)
