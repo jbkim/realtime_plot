@@ -205,9 +205,19 @@ public void makeGUI()
       .setFont(createFont("Arial",12))
       .setBarHeight(40)
       .setOpen(false)
-      .setItemHeight(40)
-      .addItems(port.list())
+      .setItemHeight(40)      
+      // .addItems(port.list())
       .setType(ScrollableList.DROPDOWN) // currently supported DROPDOWN and LIST
+      .addCallback(new CallbackListener() {
+          public void controlEvent(CallbackEvent event) {
+            if (event.getAction() == ControlP5.ACTION_PRESSED) 
+            {
+                cp5.get(ScrollableList.class, "portName").setItems(port.list());
+            }
+          }
+        } 
+      );
+      
 
     ;    
   // cp5.addScrollableList("board")
