@@ -1,48 +1,20 @@
-# ProtoCentral OpenView
-
-ProtoCentral OpenView is a unified graphical interface for MacOS/Linux/Windows for plotting/storing sensor data from most of ProtoCentral's breakout boards and shields. This software is meant to be used with a device that presents a serial UART interface, such as an Arduino. The software is written entirely in [Processing](https://processing.org/) and fully extensible to read data from your own boards also.
+# Readl Time Plot
+이 코드는 [ProtoCentral OpenView](https://github.com/Protocentral/protocentral_openview)의 코드를 포크해서 수정한 것이다. 기존 코드의 경우 지원하는 보드에 따른 시리얼 패킷의 구조가 있었고, data copy가 빈번하게 있어서 가장 일반적인 형태의 시리얼 데이터를 처리하기 위한 형태로 바꾸었다. 
 
 ![OpenView Animated](images/openview.gif)
 
 ## Features:
 
-* Multiple boards, one unified interface 
-* Adaptable data packet format according to type of board used
-* Development environment: [Processing 3 / 4 Java](https://processing.org/)
-* Compatibility: MacOS/Linux/Windows
-* Data storage option to text or CSV files
-* Default baud rate is 57,600 bps
-*
-* You can add your own board by editing the source file
-
-## Installing and using ProtoCentral OpenView
-
-
-ProtoCentral OpenView is available for Windows, MacOS and Linux.
-
-You can download the latest version for your operating system from the [Releases](https://github.com/Protocentral/protocentral_openview/releases) page. 
-
-OpenView is written on the [Processing Java IDE](https://processing.org/download/) and is fully open source. You can compile your own from the source code provide in this GitHub repository. 
-
-## Compiling and running OpenView from Source
-
-1. Install the [Processing IDE](https://processing.org/download) for your specific operating system from [here](https://processing.org/download) 
-2. Install the folowing library dependencies. You can install these from Processing through (Sketch->Import Library->Add Library) and search for the name.
+* 시리얼은 기본 230400
+* 시리얼 이벤트는 "\n"을 받을때 마다 처리
+* 개발 환경 : [Processing 3 / 4 Java](https://processing.org/)
+* 사용된 라이브러리
     * ControlP5 GUI library
     * Grafica
-3. Click Run to run the application
 
-## Supported devices
-
-Currently, this application supports the following boards:
-
-* ProtoCentral [ADS1292R ECG/Respiration Breakout](https://protocentral.com/product/ads1292r-ecg-respiration-breakout-kit/) and [ADS1292R ECG/Respiration Shield](https://protocentral.com/product/ads1292r-ecg-respiration-shield-for-arduino-v2/)
-* ProtoCentral [ADS1293 3-channel ECG Breakout](https://protocentral.com/product/protocentral-ads1293-breakout-board/) 
-* ProtoCentral [AFE4490 Breakout board](https://protocentral.com/product/protocentral-afe4490-pulse-oximeter-breakout-board-kit/) and [AFE4490 Arduino shield](https://protocentral.com/product/protocentral-afe4490-pulse-oximeter-shield-for-arduino-v2/)
-* ProtoCentral [MAX30003 Breakout Board](https://protocentral.com/product/protocentral-max30003-single-lead-ecg-breakout-board-v2/)
-* ProtoCentral [MAX86150 PPG and ECG breakout](https://protocentral.com/product/protocentral-max86150-ppg-and-ecg-breakout-with-qwiic-v2/)
-* ProtoCentral [Pulse Express Pulse-Ox & Heart Rate Sensor with MAX32664](https://protocentral.com/product/pulse-express-pulse-ox-heart-rate-sensor-with-max32664/)
-* ProtoCentral [MAX30001 ECG & BIOZ Breakout](https://protocentral.com/product/protocentral-max30001/) 
+## To do:
+* Enable Baud rate seleting
+* Refresh port list
 
 # License
 
