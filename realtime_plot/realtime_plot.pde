@@ -2,7 +2,7 @@
 //
 //   Desktop GUI for real time plot searil data
 //
-//   Writen by: Jinbuhm Kim (jinbuhm.kim@gmail.com)
+//   Modified by: Jinbuhm Kim (jinbuhm.kim@gmail.com)
 //
 //   Poke "protocentral_openview" and modified it leaving only the minimum functionality.
 //
