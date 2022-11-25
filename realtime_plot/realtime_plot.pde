@@ -88,6 +88,18 @@ Textlabel lblPlot3Scale;
 
 final static String ICON  = "icon_logo.jpg";
 
+void initBuffer()
+{
+  for (int i=0; i<windowSize; i++) 
+  {
+    //time = time + 1;
+    //xdata[i]=time;
+    ch1Data[i] = 0;
+    ch2Data[i] = 0;
+    ch3Data[i] = 0;    
+  }
+}
+
 public void setup() 
 {  
   GPointsArray pointsPPG = new GPointsArray(windowSize);
@@ -145,15 +157,8 @@ public void setup()
   plot2.setPoints(pointsPPG);
   plot3.setPoints(pointsAccel);
 
-  for (int i=0; i<windowSize; i++) 
-  {
-    //time = time + 1;
-    //xdata[i]=time;
-    ch1Data[i] = 0;
-    ch2Data[i] = 0;
-    ch3Data[i] = 0;    
-    
-  }
+  initBuffer();
+
 }
 
 
@@ -389,6 +394,8 @@ void toggleONOFF(boolean onoff) {
       startSerial(selectedPort, 230400);
       cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("STOP");
       cp5.get(ScrollableList.class, "portName").lock();
+
+      initBuffer();
 
       // Start command
       println("Start command");
