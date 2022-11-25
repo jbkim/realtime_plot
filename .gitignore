@@ -14,3 +14,5 @@ macos-x86_64
 windows-amd64
 
 **/out/
+*.class
+*.java
