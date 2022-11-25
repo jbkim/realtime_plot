@@ -389,8 +389,22 @@ void toggleONOFF(boolean onoff) {
       startSerial(selectedPort, 230400);
       cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("STOP");
       cp5.get(ScrollableList.class, "portName").lock();
+
+      // Start command
+      println("Start command");
+      if (selectedTest == "EEG") {
+          port.write('E');
+      }else if (selectedTest == "PPG") {
+          port.write('P');
+      }else if (selectedTest == "Accelerometer") {
+          port.write('A');
+      }
   } else {
       if(port != null){
+        // Stop command
+        println("Stop command");      
+        port.write('T');      
+
         stopSerial();
         cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("START");
         cp5.get(ScrollableList.class, "portName").unlock();

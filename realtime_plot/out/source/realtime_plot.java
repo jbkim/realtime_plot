@@ -420,12 +420,19 @@ public void makeGUI()
       startSerial(selectedPort, 230400);
       cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("STOP");
       cp5.get(ScrollableList.class, "portName").lock();
+      // Start command
+      println("Start command");
+      port.write('E');
+
   } else {
       if(port != null){
         stopSerial();
         cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("START");
         cp5.get(ScrollableList.class, "portName").unlock();
       }
+      // Stop command
+      println("Stop command");      
+      port.write('T');      
   }
 }
 
