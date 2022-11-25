@@ -16,3 +16,4 @@ windows-amd64
 **/out/
 *.class
 *.java
+.vscode/settings.json
