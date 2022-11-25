@@ -41,6 +41,8 @@ import controlP5.*;
 ControlP5 cp5;
 PImage logo;
 
+String selectedTest;
+
 int windowSize = 6 * 128;                                            // Total Size of the buffer
 int arrayIndex1=0;
 int arrayIndex2=0;
@@ -90,7 +92,7 @@ public void setup()
 {  
   GPointsArray pointsPPG = new GPointsArray(windowSize);
   GPointsArray pointsECG = new GPointsArray(windowSize);
-  GPointsArray pointsResp = new GPointsArray(windowSize);
+  GPointsArray pointsAccel = new GPointsArray(windowSize);
 
   size(1024, 768, JAVA2D);
   //fullScreen();
@@ -136,12 +138,12 @@ public void setup()
   {
     pointsPPG.add(i, 0);
     pointsECG.add(i, 0);
-    pointsResp.add(i, 0); 
+    pointsAccel.add(i, 0); 
   }
 
   plot1.setPoints(pointsECG);
   plot2.setPoints(pointsPPG);
-  plot3.setPoints(pointsResp);
+  plot3.setPoints(pointsAccel);
 
   for (int i=0; i<windowSize; i++) 
   {
@@ -163,6 +165,23 @@ void changeAppIcon(PImage img) {
   pg.endDraw();
 
 }
+
+// void controlEvent(ControlEvent theControlEvent) 
+// {
+//   if (theControlEvent.isFrom("test_menu"))
+//   {  
+//     println("Menu 1");
+//   }
+
+//   if (theControlEvent.getName().equals("menu2"))
+//   {
+//     println("Menu 2");
+//   }
+
+//   if (theControlEvent.isGroup()) {
+//     println("event from group : "+theControlEvent.getGroup().getValue()+" from "+theControlEvent.getGroup());
+//   }
+// }
 
 public void makeGUI()
 {  
@@ -218,23 +237,17 @@ public void makeGUI()
         } 
       );
 
-  // cp5.addScrollableList("board")
-  //  .setPosition(275, 10)
-  //  .setSize(250, 400)
-  //  .setFont(createFont("Arial",12))
-  //  .setBarHeight(40)
-  //  .setItemHeight(40)
-  //  .setOpen(false)
-    
-  //  .addItem("ADS1292R Breakout/Shield","ads1292r")
-  //  .addItem("ADS1293 Breakout/Shield","ads1293")
-  //  .addItem("AFE4490 Breakout/Shield","afe4490")
-  //  .addItem("MAX86150 Breakout","max86150")
-  //  .addItem("Pulse Express (MAX30102/MAX32664D)","pulse-exp")
-  //  .addItem("MAX30003 ECG Breakout","max30003")
-  //  .addItem("MAX30001 ECG & BioZ Breakout","max30001")
-    
-  //  .setType(ScrollableList.DROPDOWN);    
+  cp5.addScrollableList("testIndex")
+   .setPosition(275, 10)
+   .setSize(250, 400)
+   .setFont(createFont("Arial",12))
+   .setBarHeight(40)
+   .setItemHeight(40)
+   .setOpen(false)    
+   .addItem("EEG","1")
+   .addItem("PPG","2")
+   .addItem("Accelerometer","3")
+   .setType(ScrollableList.DROPDOWN);
 
   cp5.addButton("logo")
   .setPosition(20,height-40)
@@ -385,6 +398,12 @@ void toggleONOFF(boolean onoff) {
   }
 }
 
+void testIndex(int n) 
+{
+  println(n, cp5.get(ScrollableList.class, "testIndex").getItem(n));
+  selectedTest = cp5.get(ScrollableList.class, "testIndex").getItem(n).get("name").toString();
+}
+
 
 public void draw() 
 {
@@ -511,18 +530,30 @@ void stopSerial()
 void serialEvent (Serial myPort)
 {
   String inString = myPort.readStringUntil('\n');
+
   if (inString != null) {
     inString = trim(inString);  // trim off whitespaces.
     inByte = float(inString);   // convert to a number.
     inByte = map(inByte, 0, windowSize, 0, height); //map to the screen height.
-    // newData = true; 
 
-    ch1Data[arrayIndex1] = inByte;
-    arrayIndex1++;
-    if (arrayIndex1 == windowSize)
-    {  
-      arrayIndex1 = 0;
+    if (selectedTest == "EEG") {
+      ch1Data[arrayIndex1] = inByte;
+      arrayIndex1++;
+      if (arrayIndex1 == windowSize)
+      {  
+        arrayIndex1 = 0;
+      }
+    }else if (selectedTest == "PPG") {
+      ch2Data[arrayIndex2] = inByte;
+      arrayIndex2++;
+      if (arrayIndex2 == windowSize)
+      {  
+        arrayIndex2 = 0;
+      }
+    }else if (selectedTest == "Accelerometer") {
+
     }
+
   }
 
   // pcProcessData(inString);
