@@ -244,7 +244,7 @@ public void makeGUI()
 
   cp5.addScrollableList("testIndex")
    .setPosition(275, 10)
-   .setSize(250, 400)
+   .setSize(120, 400)
    .setFont(createFont("Arial",12))
    .setBarHeight(40)
    .setItemHeight(40)
@@ -362,7 +362,7 @@ void plot3_scale(int n)
     updatePlot3Scale();
 }
 
-void updatePortStatus()
+void displayPortStatus()
 {
     lblSelectedDevice.setText("Selected port: " + selectedPort);
 }
@@ -386,7 +386,7 @@ void portName(int n)
 {
   println(n, cp5.get(ScrollableList.class, "portName").getItem(n));
   selectedPort = cp5.get(ScrollableList.class, "portName").getItem(n).get("name").toString();
-  updatePortStatus();  
+  displayPortStatus();  
 }
 
 void toggleONOFF(boolean onoff) {
