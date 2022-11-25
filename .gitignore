@@ -13,5 +13,4 @@ macos-aarch64
 macos-x86_64
 windows-amd64
 
-out/
-
+**/out/
