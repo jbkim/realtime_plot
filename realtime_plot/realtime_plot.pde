@@ -70,10 +70,6 @@ float inByte;
 
 String selectedPort;                                    // Holds the selected port number
 
-String selectedPlot1Scale; 
-String selectedPlot2Scale; 
-String selectedPlot3Scale;
-
 int totalPlotsHeight=0;
 int totalPlotsWidth=0;
 int heightHeader=100;
@@ -81,10 +77,6 @@ int heightHeader=100;
 Textlabel lblSelectedDevice;
 Textlabel lblComputedVal1;
 Textlabel lblComputedVal2;
-
-Textlabel lblPlot1Scale;
-Textlabel lblPlot2Scale;
-Textlabel lblPlot3Scale;
 
 final static String ICON  = "icon_logo.jpg";
 
@@ -103,7 +95,7 @@ void initBuffer()
 public void setup() 
 {  
   GPointsArray pointsPPG = new GPointsArray(windowSize);
-  GPointsArray pointsECG = new GPointsArray(windowSize);
+  GPointsArray pointsEEG = new GPointsArray(windowSize);
   GPointsArray pointsAccel = new GPointsArray(windowSize);
 
   size(1024, 768, JAVA2D);
@@ -148,12 +140,13 @@ public void setup()
 
   for (int i = 0; i < windowSize; i++) 
   {
+    pointsEEG.add(i, 0);
     pointsPPG.add(i, 0);
-    pointsECG.add(i, 0);
     pointsAccel.add(i, 0); 
+
   }
 
-  plot1.setPoints(pointsECG);
+  plot1.setPoints(pointsEEG);
   plot2.setPoints(pointsPPG);
   plot3.setPoints(pointsAccel);
 
@@ -171,22 +164,6 @@ void changeAppIcon(PImage img) {
 
 }
 
-// void controlEvent(ControlEvent theControlEvent) 
-// {
-//   if (theControlEvent.isFrom("test_menu"))
-//   {  
-//     println("Menu 1");
-//   }
-
-//   if (theControlEvent.getName().equals("menu2"))
-//   {
-//     println("Menu 2");
-//   }
-
-//   if (theControlEvent.isGroup()) {
-//     println("event from group : "+theControlEvent.getGroup().getValue()+" from "+theControlEvent.getGroup());
-//   }
-// }
 
 public void makeGUI()
 {  
@@ -244,7 +221,7 @@ public void makeGUI()
 
   cp5.addScrollableList("testIndex")
    .setPosition(275, 10)
-   .setSize(120, 400)
+   .setSize(150, 400)
    .setFont(createFont("Arial",12))
    .setBarHeight(40)
    .setItemHeight(40)
@@ -259,127 +236,17 @@ public void makeGUI()
   .setImages(loadImage("bottom_logo.png"), loadImage("bottom_logo.png"), loadImage("bottom_logo.png"))
   .updateSize();    
 
-  // lblComputedVal1 = cp5.addTextlabel("lbl_computer_val1")
-  // .setText("val1")
-  // .setPosition(width-400,height-40)
-  // .setColorValue(color(255,255,255))
-  // .setFont(createFont("verdana",20));
-
-  // lblComputedVal2 = cp5.addTextlabel("lbl_computer_val2")
-  // .setText("val2")
-  // .setPosition(width-200,height-40)
-  // .setColorValue(color(255,255,255))
-  // .setFont(createFont("verdana",20));
-
   lblSelectedDevice = cp5.addTextlabel("lblSelectedDevice")
   .setText("")
   .setPosition(250,height-30)
   .setColorValue(color(255,255,255))
   .setFont(createFont("verdana", 14));
-
-  /*cp5.addScrollableList("plot1_scale")
-    .setPosition(width-170, 60)
-    .setSize(150, 400)
-    .setFont(createFont("Arial",12))
-    .setBarHeight(30)
-    .setItemHeight(30)
-    .setOpen(false)
-    
-    .setLabel("Change Scale")
-    
-    .addItem("6 secs","6")
-    .addItem("4 secs","4")
-    
-    .setType(ScrollableList.DROPDOWN);
-    
-  cp5.addScrollableList("plot2_scale")
-    .setPosition(width-170, (totalPlotsHeight/3+60))
-    .setSize(150, 400)
-    .setFont(createFont("Arial",12))
-    .setBarHeight(30)
-    .setItemHeight(30)
-    .setOpen(false)
-    
-    .setLabel("Change Scale")
-    
-    .addItem("6 secs","6")
-    .addItem("4 secs","4")
-    
-    .setType(ScrollableList.DROPDOWN);
-    
-  cp5.addScrollableList("plot3_scale")
-    .setPosition(width-170, (totalPlotsHeight/3+totalPlotsHeight/3+60))
-    .setSize(150, 400)
-    .setFont(createFont("Arial",12))
-    .setBarHeight(30)
-    .setItemHeight(30)
-    .setOpen(false)
-    
-    .setLabel("Change Scale")
-    
-    .addItem("6 secs","6")
-    .addItem("4 secs","4")
-    .setType(ScrollableList.DROPDOWN);
-  */
-
-  // lblPlot1Scale = cp5.addTextlabel("lblPlot1Scale")
-  // .setText("X: 6 secs | Y: auto")
-  // .setPosition(20, 60)
-  // .setColorValue(color(255,255,255))
-  // .setFont(createFont("verdana",12));
-
-  // lblPlot2Scale = cp5.addTextlabel("lblPlot2Scale")
-  // .setText("X: 6 secs | Y: auto")
-  // .setPosition(20, (totalPlotsHeight/3+60))
-  // .setColorValue(color(255,255,255))
-  // .setFont(createFont("verdana",12));
-
-  // lblPlot3Scale = cp5.addTextlabel("lblPlot3Scale")
-  // .setText("X: 6 secs | Y: auto")
-  // .setPosition(20, (totalPlotsHeight/3+totalPlotsHeight/3+60))
-  // .setColorValue(color(255,255,255))
-  // .setFont(createFont("verdana",12));     
-}
-
-void plot1_scale(int n) 
-{
-    Map itemMap = cp5.get(ScrollableList.class, "plot1_scale").getItem(n);
-    selectedPlot1Scale = itemMap.get("value").toString();    
-    updatePlot1Scale();
-}
-
-void plot2_scale(int n) 
-{
-    Map itemMap = cp5.get(ScrollableList.class, "plot2_scale").getItem(n);
-    selectedPlot2Scale = itemMap.get("value").toString();    
-    updatePlot2Scale();
-}
-
-void plot3_scale(int n) 
-{
-    Map itemMap = cp5.get(ScrollableList.class, "plot3_scale").getItem(n);
-    selectedPlot3Scale = itemMap.get("value").toString();    
-    updatePlot3Scale();
+   
 }
 
 void displayPortStatus()
 {
     lblSelectedDevice.setText("Selected port: " + selectedPort);
-}
-
-void updatePlot1Scale()
-{
-    lblPlot1Scale.setText("X: " + selectedPlot1Scale + " secs | Y: auto");
-}
-
-void updatePlot2Scale()
-{
-    lblPlot2Scale.setText("X: " + selectedPlot2Scale + " secs | Y: auto");
-}
-
-void updatePlot3Scale()
-{
-    lblPlot3Scale.setText("X: " + selectedPlot3Scale + " secs | Y: auto");
 }
 
 void portName(int n) 
@@ -542,20 +409,40 @@ void stopSerial()
   }
 }
 
-// void serialEvent (Serial blePort)
-// {
-//   inString = blePort.readChar();
-//   pcProcessData(inString);
-// }
 
 void serialEvent (Serial myPort)
 {
+  float accel_x, accel_y, accel_z;
   String inString = myPort.readStringUntil('\n');
 
   if (inString != null) {
     inString = trim(inString);  // trim off whitespaces.
-    inByte = float(inString);   // convert to a number.
-    inByte = map(inByte, 0, windowSize, 0, height); //map to the screen height.
+
+    if (selectedTest == "Accelerometer") {
+      String[] q = splitTokens(inString, ", ");
+
+      accel_x = float(q[0]);
+      accel_y = float(q[1]);
+      accel_z = float(q[2]);
+
+      ch1Data[arrayIndex3] = map(accel_x, 0, windowSize, 0, height);
+      ch2Data[arrayIndex3] = map(accel_y, 0, windowSize, 0, height);
+      ch3Data[arrayIndex3] = map(accel_z, 0, windowSize, 0, height);            
+
+      // ch1Data[arrayIndex3] = accel_x;
+      // ch2Data[arrayIndex3] = accel_y;
+      // ch3Data[arrayIndex3] = accel_z;
+
+      arrayIndex3++;
+      if (arrayIndex3 == windowSize)
+      {  
+        arrayIndex3 = 0;
+      }
+    }else {
+      inByte = float(inString);   // convert to a number.
+      inByte = map(inByte, 0, windowSize, 0, height); //map to the screen height.
+    }
+  }
 
     if (selectedTest == "EEG") {
       ch1Data[arrayIndex1] = inByte;
@@ -571,32 +458,5 @@ void serialEvent (Serial myPort)
       {  
         arrayIndex2 = 0;
       }
-    }else if (selectedTest == "Accelerometer") {
-
-    }
-
   }
-
-  // pcProcessData(inString);
 }
-
-
-//void pcProcessData(char rxch)
-//{
-//    if (logging == true)
-//    {
-//      try 
-//      {
-//        date = new Date();
-//        dateFormat = new SimpleDateFormat("HH:mm:ss");
-//        // bufferedWriter.write(dateFormat.format(date)+","+ch1+","+ch2+","+ch3);
-//        bufferedWriter.newLine();
-//      }
-//      catch(IOException e) 
-//      {
-//        println("It broke!!!");
-//        e.printStackTrace();
-//      }
-//    }  
-
-//}
