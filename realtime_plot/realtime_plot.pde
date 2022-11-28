@@ -42,6 +42,7 @@ ControlP5 cp5;
 PImage logo;
 
 String selectedTest;
+String serialMsg = "_";
 
 int windowSize = 6 * 128;                                            // Total Size of the buffer
 int arrayIndex1=0;
@@ -54,7 +55,7 @@ float[] ch2Data = new float[windowSize];
 float[] ch3Data = new float[windowSize];
 
 boolean startPlot = false;
-GPlot plot1, plot2, plot3;
+GPlot plot1, plot2, plot3, plot4;
 
 /************** File Related Variables **********************/
 boolean logging = false;                                // Variable to check whether to record the data or not
@@ -98,13 +99,14 @@ public void setup()
   GPointsArray pointsEEG = new GPointsArray(windowSize);
   GPointsArray pointsAccel = new GPointsArray(windowSize);
 
-  size(1024, 768, JAVA2D);
+  // size(1024, 768, JAVA2D);
+  size(1024, 800, JAVA2D);  
   //fullScreen();
    
   heightHeader = 100;
   println("Height:"+ height);
 
-  totalPlotsHeight = height - heightHeader;
+  totalPlotsHeight = height - heightHeader; 
   
   makeGUI();
   surface.setTitle("Real Time Plot");
@@ -113,7 +115,7 @@ public void setup()
   
   plot1 = new GPlot(this);
   plot1.setPos(20,60);
-  plot1.setDim(width - 40, (totalPlotsHeight/3) - 10);
+  plot1.setDim(width - 40, (totalPlotsHeight/4) - 10);
   plot1.setBgColor(0);
   plot1.setBoxBgColor(0);
   plot1.setLineColor(color(0, 255, 0));
@@ -121,8 +123,8 @@ public void setup()
   plot1.setMar(0,0,0,0);
   
   plot2 = new GPlot(this);
-  plot2.setPos(20,(totalPlotsHeight/3+60));
-  plot2.setDim(width-40, (totalPlotsHeight/3)-10);
+  plot2.setPos(20,(totalPlotsHeight/4+60));
+  plot2.setDim(width-40, (totalPlotsHeight/4)-10);
   plot2.setBgColor(0);
   plot2.setBoxBgColor(0);
   plot2.setLineColor(color(255, 255, 0));
@@ -130,13 +132,22 @@ public void setup()
   plot2.setMar(0,0,0,0);
 
   plot3 = new GPlot(this);
-  plot3.setPos(20,(totalPlotsHeight/3+totalPlotsHeight/3+60));
-  plot3.setDim(width-40, (totalPlotsHeight/3)-10);
+  plot3.setPos(20,(totalPlotsHeight/4+totalPlotsHeight/4+60));
+  plot3.setDim(width-40, (totalPlotsHeight/4)-10);
   plot3.setBgColor(0);
   plot3.setBoxBgColor(0);
   plot3.setLineColor(color(0,0,255));
   plot3.setLineWidth(3);
   plot3.setMar(0,0,0,0);
+
+  plot4 = new GPlot(this);
+  plot4.setPos(20,(totalPlotsHeight/4+totalPlotsHeight/4+60+totalPlotsHeight/4+60));
+  plot4.setDim(width-40, (totalPlotsHeight/4)-10);
+  plot4.setBgColor(0);
+  plot4.setBoxBgColor(0);
+  plot4.setLineColor(color(0,0,255));
+  plot4.setLineWidth(3);
+  plot4.setMar(0,0,0,0);
 
   for (int i = 0; i < windowSize; i++) 
   {
@@ -265,7 +276,7 @@ void toggleONOFF(boolean onoff) {
       initBuffer();
 
       // Start command
-      println("Start command");
+      // println("Start command");
       if (selectedTest == "EEG") {
           port.write('E');
       }else if (selectedTest == "PPG") {
@@ -297,6 +308,10 @@ public void draw()
 {
   //background(0);
   background(19,75,102);
+
+  textSize(16);
+  text(serialMsg, 30, 620); 
+  fill(0, 408, 612);
 
   GPointsArray pointsPlot1 = new GPointsArray(windowSize);
   GPointsArray pointsPlot2 = new GPointsArray(windowSize);
@@ -414,6 +429,11 @@ void serialEvent (Serial myPort)
 {
   float accel_x, accel_y, accel_z;
   String inString = myPort.readStringUntil('\n');
+
+  if (inString != null) {
+    println(inString);
+    serialMsg = inString;
+  }
 
   if (inString != null) {
     inString = trim(inString);  // trim off whitespaces.
