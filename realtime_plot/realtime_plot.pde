@@ -55,7 +55,8 @@ float[] ch2Data = new float[windowSize];
 float[] ch3Data = new float[windowSize];
 
 boolean startPlot = false;
-GPlot plot1, plot2, plot3, plot4;
+GPlot plot1, plot2, plot3;
+boolean cmdSent = false;
 
 /************** File Related Variables **********************/
 boolean logging = false;                                // Variable to check whether to record the data or not
@@ -99,8 +100,8 @@ public void setup()
   GPointsArray pointsEEG = new GPointsArray(windowSize);
   GPointsArray pointsAccel = new GPointsArray(windowSize);
 
-  // size(1024, 768, JAVA2D);
-  size(1024, 800, JAVA2D);  
+  size(1024, 768, JAVA2D);
+  // size(1024, 800, JAVA2D);  
   //fullScreen();
    
   heightHeader = 100;
@@ -115,7 +116,7 @@ public void setup()
   
   plot1 = new GPlot(this);
   plot1.setPos(20,60);
-  plot1.setDim(width - 40, (totalPlotsHeight/4) - 10);
+  plot1.setDim(width - 40, (totalPlotsHeight/3) - 10);
   plot1.setBgColor(0);
   plot1.setBoxBgColor(0);
   plot1.setLineColor(color(0, 255, 0));
@@ -123,8 +124,8 @@ public void setup()
   plot1.setMar(0,0,0,0);
   
   plot2 = new GPlot(this);
-  plot2.setPos(20,(totalPlotsHeight/4+60));
-  plot2.setDim(width-40, (totalPlotsHeight/4)-10);
+  plot2.setPos(20,(totalPlotsHeight/3+60));
+  plot2.setDim(width-40, (totalPlotsHeight/3)-10);
   plot2.setBgColor(0);
   plot2.setBoxBgColor(0);
   plot2.setLineColor(color(255, 255, 0));
@@ -132,22 +133,13 @@ public void setup()
   plot2.setMar(0,0,0,0);
 
   plot3 = new GPlot(this);
-  plot3.setPos(20,(totalPlotsHeight/4+totalPlotsHeight/4+60));
-  plot3.setDim(width-40, (totalPlotsHeight/4)-10);
+  plot3.setPos(20,(totalPlotsHeight/3+totalPlotsHeight/3+60));
+  plot3.setDim(width-40, (totalPlotsHeight/3)-10);
   plot3.setBgColor(0);
   plot3.setBoxBgColor(0);
   plot3.setLineColor(color(0,0,255));
   plot3.setLineWidth(3);
   plot3.setMar(0,0,0,0);
-
-  plot4 = new GPlot(this);
-  plot4.setPos(20,(totalPlotsHeight/4+totalPlotsHeight/4+60+totalPlotsHeight/4+60));
-  plot4.setDim(width-40, (totalPlotsHeight/4)-10);
-  plot4.setBgColor(0);
-  plot4.setBoxBgColor(0);
-  plot4.setLineColor(color(0,0,255));
-  plot4.setLineWidth(3);
-  plot4.setMar(0,0,0,0);
 
   for (int i = 0; i < windowSize; i++) 
   {
@@ -181,12 +173,12 @@ public void makeGUI()
   cp5 = new ControlP5(this);
 
   cp5.addToggle("toggleONOFF")
-    .setPosition(width-225,10)
+    .setPosition(width-375,10)
     .setSize(100,40)
     .setValue(false)
     .setColorBackground(color(0,255,0))
     .setColorActive(color(255,0,0))
-    .setCaptionLabel("START")
+    .setCaptionLabel("OPEN")
     .setColorLabel(0) 
     .getCaptionLabel()
     .setFont(createFont("Arial",15))
@@ -194,7 +186,39 @@ public void makeGUI()
     .align(ControlP5.CENTER,ControlP5.CENTER)
     ;
 
-  cp5.addButton("Record")
+  cp5.addButton("Send CMD")
+    .setValue(0)
+    .setPosition(width-260,10)
+    .setSize(100,40)
+    .setFont(createFont("Arial",15))
+    .addCallback(new CallbackListener() {
+        public void controlEvent(CallbackEvent event) {
+          if (event.getAction() == ControlP5.ACTION_RELEASED) 
+          {
+            // Start command
+            print("Start command: ");
+            if (selectedTest == "EEG") {
+                println("send E");
+                if (port != null) {
+                  port.write('E');
+                }
+            }else if (selectedTest == "PPG") {
+                println("send P"); 
+                if (port != null) {                             
+                  port.write('P');
+                }
+            }else if (selectedTest == "Accelerometer") {
+                println("send A"); 
+                if (port != null) {                                             
+                  port.write('A');
+                }
+            }
+          }
+        }
+      } 
+    );
+
+  cp5.addButton("Stop CMD")
     .setValue(0)
     .setPosition(width-110,10)
     .setSize(100,40)
@@ -203,12 +227,15 @@ public void makeGUI()
         public void controlEvent(CallbackEvent event) {
           if (event.getAction() == ControlP5.ACTION_RELEASED) 
           {
-            RecordData();
-            //cp5.remove(event.getController().getName());
-          }
+            // Stop command
+            print("Stop command");
+            if (port != null) {
+              port.write('T');
+            }
         }
       } 
-    );
+    }
+  );    
         
   cp5.addScrollableList("portName")
       .setPosition(20, 10)
@@ -270,28 +297,14 @@ void portName(int n)
 void toggleONOFF(boolean onoff) {
   if(onoff == true) {
       startSerial(selectedPort, 230400);
-      cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("STOP");
+      cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("CLOSE");
       cp5.get(ScrollableList.class, "portName").lock();
 
       initBuffer();
-
-      // Start command
-      // println("Start command");
-      if (selectedTest == "EEG") {
-          port.write('E');
-      }else if (selectedTest == "PPG") {
-          port.write('P');
-      }else if (selectedTest == "Accelerometer") {
-          port.write('A');
-      }
   } else {
       if(port != null){
-        // Stop command
-        println("Stop command");      
-        port.write('T');      
-
         stopSerial();
-        cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("START");
+        cp5.get(Toggle.class, "toggleONOFF").setCaptionLabel("OPEN");
         cp5.get(ScrollableList.class, "portName").unlock();
       }
   }
@@ -309,9 +322,9 @@ public void draw()
   //background(0);
   background(19,75,102);
 
-  textSize(16);
-  text(serialMsg, 30, 620); 
-  fill(0, 408, 612);
+  // textSize(16);
+  // text(serialMsg, 30, 620); 
+  // fill(0, 408, 612);
 
   GPointsArray pointsPlot1 = new GPointsArray(windowSize);
   GPointsArray pointsPlot2 = new GPointsArray(windowSize);
@@ -364,36 +377,6 @@ public void CloseApp()
   } 
 }
 
-public void RecordData()
-{
-    try
-  {
-    jFileChooser = new JFileChooser();
-    jFileChooser.setSelectedFile(new File("log.csv"));
-    jFileChooser.showSaveDialog(null);
-    String filePath = jFileChooser.getSelectedFile()+"";
-
-    if ((filePath.equals("log.txt"))||(filePath.equals("null")))
-    {
-
-    } else
-    {    
-      logging = true;
-      date = new Date();
-      output = new FileWriter(jFileChooser.getSelectedFile(), true);
-      bufferedWriter = new BufferedWriter(output);
-      bufferedWriter.write(date.toString()+"");
-      bufferedWriter.newLine();
-      bufferedWriter.write("TimeStamp,ECG,PPG");
-      bufferedWriter.newLine();
-    }
-  }
-  catch(Exception e)
-  {
-    println("File Not Found");
-  }
-}
-
 void startSerial(String startPortName, int baud)
 {
   try
@@ -428,17 +411,30 @@ void stopSerial()
 void serialEvent (Serial myPort)
 {
   float accel_x, accel_y, accel_z;
+
   String inString = myPort.readStringUntil('\n');
 
   if (inString != null) {
-    println(inString);
-    serialMsg = inString;
-  }
-
-  if (inString != null) {
     inString = trim(inString);  // trim off whitespaces.
+    inByte = float(inString);   // convert to a number.
+    inByte = map(inByte, 0, windowSize, 0, height); //map to the screen height.
 
-    if (selectedTest == "Accelerometer") {
+
+    if (selectedTest == "EEG") {
+      ch1Data[arrayIndex1] = inByte;
+      arrayIndex1++;
+      if (arrayIndex1 == windowSize)
+      {  
+        arrayIndex1 = 0;
+      }
+    }else if (selectedTest == "PPG") {
+      ch2Data[arrayIndex2] = inByte;
+      arrayIndex2++;
+      if (arrayIndex2 == windowSize)
+      {  
+        arrayIndex2 = 0;
+      }
+    }else if (selectedTest == "Accelerometer") {
       String[] q = splitTokens(inString, ", ");
 
       accel_x = float(q[0]);
@@ -458,25 +454,36 @@ void serialEvent (Serial myPort)
       {  
         arrayIndex3 = 0;
       }
-    }else {
-      inByte = float(inString);   // convert to a number.
-      inByte = map(inByte, 0, windowSize, 0, height); //map to the screen height.
     }
   }
-
-    if (selectedTest == "EEG") {
-      ch1Data[arrayIndex1] = inByte;
-      arrayIndex1++;
-      if (arrayIndex1 == windowSize)
-      {  
-        arrayIndex1 = 0;
-      }
-    }else if (selectedTest == "PPG") {
-      ch2Data[arrayIndex2] = inByte;
-      arrayIndex2++;
-      if (arrayIndex2 == windowSize)
-      {  
-        arrayIndex2 = 0;
-      }
-  }
 }
+
+// public void RecordData()
+// {
+//     try
+//   {
+//     jFileChooser = new JFileChooser();
+//     jFileChooser.setSelectedFile(new File("log.csv"));
+//     jFileChooser.showSaveDialog(null);
+//     String filePath = jFileChooser.getSelectedFile()+"";
+
+//     if ((filePath.equals("log.txt"))||(filePath.equals("null")))
+//     {
+
+//     } else
+//     {    
+//       logging = true;
+//       date = new Date();
+//       output = new FileWriter(jFileChooser.getSelectedFile(), true);
+//       bufferedWriter = new BufferedWriter(output);
+//       bufferedWriter.write(date.toString()+"");
+//       bufferedWriter.newLine();
+//       bufferedWriter.write("TimeStamp,ECG,PPG");
+//       bufferedWriter.newLine();
+//     }
+//   }
+//   catch(Exception e)
+//   {
+//     println("File Not Found");
+//   }
+// }
