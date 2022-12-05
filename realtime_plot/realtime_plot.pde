@@ -72,7 +72,7 @@ final static String ICON  = "icon_logo.jpg";
 
 void initBuffer()
 {
-  for (int i=0; i<windowSize; i++) 
+  for (int i = 0; i < windowSize; i++) 
   {
     ch1Data[i] = 0;
     ch2Data[i] = 0;
@@ -183,6 +183,7 @@ public void makeGUI()
         public void controlEvent(CallbackEvent event) {
           if (event.getAction() == ControlP5.ACTION_RELEASED) 
           {
+            initBuffer();
             // Start command
             print("Start command: ");
             if (selectedTest == "EEG") {
@@ -316,7 +317,7 @@ public void draw()
 
   if (startPlot)                             // If the condition is true, then the plotting is done
   {
-    for(int i=0; i<windowSize;i++)
+    for(int i = 0; i< windowSize; i++)
     {    
       pointsPlot1.add(i,ch1Data[i]);
       pointsPlot2.add(i,ch2Data[i]); 
